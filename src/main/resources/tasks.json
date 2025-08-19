@@ -1,0 +1,62 @@
+[
+  {
+    "title": "Finish project report",
+    "description": "Prepare and finalize the report for the client project",
+    "status": "TODO",
+    "due_date": "2025-09-10"
+  },
+  {
+    "title": "Team meeting",
+    "description": "Weekly status meeting with the development team",
+    "status": "IN_PROGRESS",
+    "due_date": "2025-09-05"
+  },
+  {
+    "title": "Code review",
+    "description": "Review pull requests from backend team",
+    "status": "TODO",
+    "due_date": "2025-09-08"
+  },
+  {
+    "title": "Update documentation",
+    "description": "Update project README and API docs",
+    "status": "COMPLETED",
+    "due_date": "2025-08-25"
+  },
+  {
+    "title": "Fix login bug",
+    "description": "Investigate and fix the authentication issue",
+    "status": "IN_PROGRESS",
+    "due_date": "2025-09-02"
+  },
+  {
+    "title": "Client demo",
+    "description": "Prepare demo environment for client presentation",
+    "status": "TODO",
+    "due_date": "2025-09-15"
+  },
+  {
+    "title": "Refactor service layer",
+    "description": "Clean up redundant service methods in user module",
+    "status": "IN_PROGRESS",
+    "due_date": "2025-09-12"
+  },
+  {
+    "title": "Database backup",
+    "description": "Run full backup of production database",
+    "status": "COMPLETED",
+    "due_date": "2025-08-30"
+  },
+  {
+    "title": "Design review",
+    "description": "Review UI/UX design proposals with the frontend team",
+    "status": "TODO",
+    "due_date": "2025-09-07"
+  },
+  {
+    "title": "Integration testing",
+    "description": "Run integration tests for new payment module",
+    "status": "IN_PROGRESS",
+    "due_date": "2025-09-11"
+  }
+]

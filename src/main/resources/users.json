@@ -1,0 +1,12 @@
+[
+  { "username": "Ahmed",   "password": "123" },
+  { "username": "Mohammed","password": "123" },
+  { "username": "Ali",     "password": "123" },
+  { "username": "Fatima",  "password": "123" },
+  { "username": "Khalid",  "password": "123" },
+  { "username": "Zainab",  "password": "123" },
+  { "username": "Youssef", "password": "123" },
+  { "username": "Maryam",  "password": "123" },
+  { "username": "Hussein", "password": "123" },
+  { "username": "Sarah",   "password": "123" }
+]
