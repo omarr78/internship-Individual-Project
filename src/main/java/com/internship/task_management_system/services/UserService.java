@@ -4,7 +4,9 @@ import com.internship.task_management_system.entities.User;
 import com.internship.task_management_system.exceptions.ResourceAlreadyExistException;
 import com.internship.task_management_system.exceptions.ResourceNotFoundException;
 import com.internship.task_management_system.jpa.UserRepository;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -15,8 +17,11 @@ import java.util.Optional;
 @Service
 public class UserService {
     UserRepository userRepository;
+    PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder)
+    {
+        this.passwordEncoder = passwordEncoder;
         this.userRepository = userRepository;
     }
 
@@ -37,9 +42,11 @@ public class UserService {
 
     // methods
 
-    public ResponseEntity<User> createUser(User user) {
+    public ResponseEntity<User> register(User user) {
         checkUniqueUser(user.getUsername());
 
+        user.setPassword(user.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         User newUser = userRepository.save(user);
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -75,5 +82,4 @@ public class UserService {
         userRepository.deleteById(id);
         return "User with id " + id + " deleted successfully";
     }
-
 }
