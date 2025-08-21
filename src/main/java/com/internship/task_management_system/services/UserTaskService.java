@@ -1,46 +1,41 @@
 package com.internship.task_management_system.services;
 
+import com.internship.task_management_system.dto.task.TaskRequestDto;
+import com.internship.task_management_system.dto.task.TaskResponseDto;
 import com.internship.task_management_system.entities.Task;
 import com.internship.task_management_system.emuns.TaskStatus;
 import com.internship.task_management_system.entities.User;
 import com.internship.task_management_system.exceptions.ResourceAlreadyExistException;
 import com.internship.task_management_system.exceptions.ResourceNotFoundException;
 import com.internship.task_management_system.jpa.TaskRepository;
-import com.internship.task_management_system.jpa.UserRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.net.URI;
-import java.time.LocalDate;
 import java.util.List;
 
 @Service
 public class UserTaskService {
     private final TaskRepository taskRepository;
     private final UserService userService;
-    private final UserRepository userRepository;
 
-    public UserTaskService(TaskRepository taskRepository, UserService userService, UserRepository userRepository) {
+    public UserTaskService(TaskRepository taskRepository, UserService userService) {
         this.taskRepository = taskRepository;
         this.userService = userService;
-        this.userRepository = userRepository;
     }
 
-    public void checkUniqueTask(User user, String title) {
+    private void checkUniqueTask(User user, String title, long taskId) { // check if title already exists
         user.getTasks()
                 .stream()
-                .filter(task -> task.getTitle().equals(title))
+                .filter(task -> task.getTitle().equals(title) && (taskId == 0L || task.getId() != taskId))
                 .findFirst()
                 .ifPresent(task -> {
                     throw new ResourceAlreadyExistException(
-                            "Task with title '" + title + "' already exists for user " + user.getId()
+                            "Task with title " + title + " already exists for user " + user.getId()
                     );
                 });
     }
 
 
-    public Task checkTaskExist(User user, long taskId) {
+    private Task checkTaskExist(User user, long taskId) {
         return user.getTasks().stream()
                 .filter(task -> task.getId() == taskId)
                 .findFirst()
@@ -50,43 +45,40 @@ public class UserTaskService {
     }
 
 
+    public List<TaskResponseDto> getUserTasks(long userId, TaskStatus status, String title) {
+        List<Task> tasks;
 
-    public List<Task> getUserTasks(long userId, TaskStatus status, String title) {
-        if(status == null && title == null) {
-            return taskRepository.findByUser_Id(userId);
-        }
-        else if(status != null && title == null) {
-            return taskRepository.findByUser_IdAndStatus(userId, status);
-        }
-        else if(status == null && title != null) {
-            return taskRepository.findByUser_IdAndTitleContainingIgnoreCase(userId,title);
-        }
-        else{
-            return taskRepository.
+        if (status == null && title == null) {
+            tasks = taskRepository.findByUser_Id(userId);
+        } else if (status != null && title == null) {
+            tasks = taskRepository.findByUser_IdAndStatus(userId, status);
+        } else if (status == null && title != null) {
+            tasks = taskRepository.findByUser_IdAndTitleContainingIgnoreCase(userId, title);
+        } else {
+            tasks = taskRepository.
                     findByUser_IdAndStatusAndTitleContainingIgnoreCase(userId, status, title);
         }
+        return tasks.stream().map(TaskResponseDto::new).toList();
     }
 
-
-
-    public ResponseEntity<Task> addTaskToUser(long userId, Task task) {
+    public TaskResponseDto getTask(long userId, long taskId) {
         User user = userService.checkUserExist(userId);
+        Task task = checkTaskExist(user, taskId);
 
-        checkUniqueTask(user,task.getTitle());
-
-
-        task.setUser(user);
-        Task newTask = taskRepository.save(task);
-
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(newTask.getId())
-                .toUri();
-        return ResponseEntity.created(location).build();
+        return new TaskResponseDto(task);
     }
 
-    public String deleteTask(long userId, long taskId) {
+
+    public TaskResponseDto addTaskToUser(long userId, TaskRequestDto task) {
+        User user = userService.checkUserExist(userId);
+        checkUniqueTask(user, task.getTitle(), 0L); // 0L default value for a long
+
+        Task newTask = new Task(task);
+        newTask.setUser(user);
+        return new TaskResponseDto(taskRepository.save(newTask));
+    }
+
+    public void deleteTask(long userId, long taskId) {
         User user = userService.checkUserExist(userId);
         Task task = checkTaskExist(user, taskId);
 
@@ -95,28 +87,21 @@ public class UserTaskService {
         task.setUser(null);
 
         taskRepository.delete(task);
-        return "Task deleted successfully";
     }
 
-    public String updateTask(long userId, long taskId, Task updatedTask) {
+    public TaskResponseDto updateTask(long userId, long taskId, TaskRequestDto updatedTask) {
         User user = userService.checkUserExist(userId);
         Task task = checkTaskExist(user, taskId);
-
         if (updatedTask.getTitle() != null) {
-            checkUniqueTask(user, updatedTask.getTitle()); // check if updated task title already exists?
+            checkUniqueTask(user, updatedTask.getTitle(), task.getId()); // check if updated task title already exists?
             task.setTitle(updatedTask.getTitle());
         }
-
         if (updatedTask.getDescription() != null) task.setDescription(updatedTask.getDescription());
         if (updatedTask.getStatus() != null) task.setStatus(updatedTask.getStatus());
         if (updatedTask.getDue_date() != null) {
-            if (updatedTask.getDue_date().isBefore(LocalDate.now())) {
-                throw new RuntimeException("Due date must be in the future");
-            }
             task.setDue_date(updatedTask.getDue_date());
         }
-
         taskRepository.save(task);
-        return "Task updated successfully";
+        return new TaskResponseDto(task);
     }
 }
