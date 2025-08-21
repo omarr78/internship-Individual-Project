@@ -11,88 +11,29 @@
     }
   ],
   "paths": {
-    "/users/{userId}": {
+    "/users/{userId}/tasks/{taskId}": {
       "get": {
         "tags": [
-          "user-controller"
+          "task-controller"
         ],
-        "operationId": "getUser",
+        "operationId": "getTask",
         "parameters": [
           {
-            "name": "userId",
+            "name": "taskId",
             "in": "path",
             "required": true,
             "schema": {
               "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "user-controller"
-        ],
-        "operationId": "updateUser",
-        "parameters": [
-          {
-            "name": "userId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int32"
-            }
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
+              "format": "int64"
             }
           },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "user-controller"
-        ],
-        "operationId": "deleteUser",
-        "parameters": [
           {
             "name": "userId",
             "in": "path",
             "required": true,
             "schema": {
               "type": "integer",
-              "format": "int32"
+              "format": "int64"
             }
           }
         ],
@@ -102,15 +43,13 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/TaskResponseDto"
                 }
               }
             }
           }
         }
-      }
-    },
-    "/users/{userId}/tasks/{taskId}": {
+      },
       "put": {
         "tags": [
           "task-controller"
@@ -140,7 +79,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Task"
+                "$ref": "#/components/schemas/TaskRequestDto"
               }
             }
           },
@@ -152,7 +91,7 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/TaskResponseDto"
                 }
               }
             }
@@ -186,65 +125,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/users": {
-      "get": {
-        "tags": [
-          "user-controller"
-        ],
-        "operationId": "getAllUsers",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/User"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "user-controller"
-        ],
-        "operationId": "createUser",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/User"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/User"
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -295,7 +176,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Task"
+                    "$ref": "#/components/schemas/TaskResponseDto"
                   }
                 }
               }
@@ -323,7 +204,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/Task"
+                "$ref": "#/components/schemas/TaskRequestDto"
               }
             }
           },
@@ -335,10 +216,116 @@
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/Task"
+                  "$ref": "#/components/schemas/TaskResponseDto"
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "createUser",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "getAllUsers",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/UserResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/users/{userId}": {
+      "get": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "getUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponseDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user-controller"
+        ],
+        "operationId": "deleteUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
           }
         }
       }
@@ -346,26 +333,33 @@
   },
   "components": {
     "schemas": {
-      "User": {
+      "TaskRequestDto": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "username": {
+          "title": {
             "type": "string"
           },
-          "password": {
+          "description": {
             "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "TODO",
+              "IN_PROGRESS",
+              "COMPLETED"
+            ]
+          },
+          "due_date": {
+            "type": "string",
+            "format": "date"
           }
         },
         "required": [
-          "password",
-          "username"
+          "title"
         ]
       },
-      "Task": {
+      "TaskResponseDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -390,13 +384,34 @@
             "type": "string",
             "format": "date"
           }
+        }
+      },
+      "UserRequestDto": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
         },
         "required": [
-          "description",
-          "due_date",
-          "status",
-          "title"
+          "password",
+          "username"
         ]
+      },
+      "UserResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "username": {
+            "type": "string"
+          }
+        }
       }
     }
   }

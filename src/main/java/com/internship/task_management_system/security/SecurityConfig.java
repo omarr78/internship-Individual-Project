@@ -41,8 +41,6 @@ public class SecurityConfig{
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//                .formLogin(Customizer.withDefaults()) // Spring handles sign-in form
-//                .logout(Customizer.withDefaults()) // Spring handles sign-out
                 .build();
     }
 
@@ -55,7 +53,6 @@ public class SecurityConfig{
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setPasswordEncoder(passwordEncoder());
-//        authProvider.setPasswordEncoder(NoOpPasswordEncoder.getInstance());
         authProvider.setUserDetailsService(userDetailsService);
 
         return authProvider;

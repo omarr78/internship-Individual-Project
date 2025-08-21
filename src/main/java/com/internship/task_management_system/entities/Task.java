@@ -1,12 +1,9 @@
 package com.internship.task_management_system.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.internship.task_management_system.dto.task.TaskRequestDto;
 import com.internship.task_management_system.emuns.TaskStatus;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Future;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -18,26 +15,26 @@ public class Task {
     @Id
     @GeneratedValue
     private long id;
-
-    @NotBlank(message = "title is required")
     private String title;
-
-    @NotBlank(message = "description is required")
     private String description;
 
     @Enumerated(EnumType.STRING)
-    @NotNull(message = "task status is required")
     private TaskStatus status;
 
-    @NotNull(message = "due date is required")
-    @FutureOrPresent(message = "due date must be in the future")
     private LocalDate due_date;
 
-    // to avoid Infinite recursion
-    @JsonIgnore
+    @JsonIgnore // to avoid Infinite recursion
     @ManyToOne
     @JoinColumn(name = "user_id" , nullable=false)
     private User user;
 
+    public Task() {}
+
+    public Task(TaskRequestDto taskRequestDto) {
+        this.title = taskRequestDto.getTitle();
+        this.description = taskRequestDto.getDescription();
+        this.status = taskRequestDto.getStatus() != null ? taskRequestDto.getStatus() : TaskStatus.TODO;
+        this.due_date = taskRequestDto.getDue_date() != null ? taskRequestDto.getDue_date() : LocalDate.now();
+    }
 
 }
