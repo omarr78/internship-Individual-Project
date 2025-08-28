@@ -6,6 +6,7 @@ import com.internship.task_management_system.entities.User;
 import com.internship.task_management_system.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -18,6 +19,11 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/user")
+    public Long getUserId(){
+        return userService.getUserId();
     }
 
     @GetMapping("/users")

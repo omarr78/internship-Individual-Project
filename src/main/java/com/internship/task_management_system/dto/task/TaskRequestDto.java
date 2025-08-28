@@ -17,7 +17,7 @@ public class TaskRequestDto {
     private String description;
     private TaskStatus status;
     @FutureOrPresent(message = "Due date must be today or in the future",
-            groups = {OnCreate.class, OnUpdate.class})
+            groups = {OnCreate.class})
     private LocalDate due_date;
 
 }
