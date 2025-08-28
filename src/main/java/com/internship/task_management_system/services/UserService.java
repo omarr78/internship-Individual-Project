@@ -7,6 +7,8 @@ import com.internship.task_management_system.exceptions.ResourceAlreadyExistExce
 import com.internship.task_management_system.exceptions.ResourceNotFoundException;
 import com.internship.task_management_system.jpa.UserRepository;
 
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,11 +38,22 @@ public class UserService {
     void checkUniqueUser(String username) {
         Optional<User> newUser = userRepository.findByUsername(username);
         if (newUser.isPresent()) {
-            throw new ResourceAlreadyExistException("username : " + username + " already exist");
+            throw new ResourceAlreadyExistException("username: " + username + " already exist");
         }
     }
 
     // methods
+
+    public Long getUserId(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        System.out.println(auth.getName());
+
+        String username = auth.getName();
+
+        return userRepository.findByUsername(username)
+                .map(User::getId)
+                .orElseThrow(() -> new ResourceNotFoundException("User with id " + username + " Not found"));
+    }
 
     public UserResponseDto register(UserRequestDto user) {
         String password = user.getPassword();
